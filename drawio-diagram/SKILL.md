@@ -1,68 +1,43 @@
 ---
 name: drawio-diagram
-description: Generate draw.io diagrams from natural language descriptions. Use when creating visual diagrams including flowcharts, architecture diagrams (AWS/Azure/GCP), sequence diagrams, network diagrams, process flows, organizational charts, UML diagrams, or any structured visual representation. Outputs draw.io XML that can be imported into diagrams.net or saved as .drawio files.
+description: Generate draw.io diagrams from natural language descriptions. This is a STANDALONE skill that requires NO external tools, MCP servers, or API calls. Use when creating visual diagrams including flowcharts, architecture diagrams (AWS/Azure/GCP), sequence diagrams, network diagrams, process flows, organizational charts, UML diagrams, or any structured visual representation. Outputs draw.io XML that can be imported into diagrams.net or saved as .drawio files.
 ---
 
 # Draw.io Diagram Generator
 
-Generate draw.io diagrams directly from natural language descriptions by producing valid draw.io XML.
+Generate draw.io diagrams directly from natural language descriptions. This skill is **completely standalone** - all required knowledge is contained within this skill, requiring no external tools or services.
+
+## Important: This Skill is Self-Contained
+
+This skill provides everything needed to generate draw.io diagrams:
+
+1. **Complete XML Specification** - See [references/xml-format.md](references/xml-format.md)
+2. **Full Style Reference** - See [references/styles-patterns.md](references/styles-patterns.md)
+3. **Cloud Provider Icons** - See [references/cloud-icons.md](references/cloud-icons.md)
+4. **Ready-to-Use Templates** - See [references/templates.md](references/templates.md)
+5. **Python Generation Scripts** - See [scripts/generate_diagram.py](scripts/generate_diagram.py)
+6. **Validation Tools** - See [scripts/validate_xml.py](scripts/validate_xml.py)
+
+**DO NOT use web search, MCP tools, or external services.** All information is available in the reference files above.
 
 ## Quick Start
 
-Generate diagrams in three steps:
+### Method 1: Direct XML Generation
 
-1. **Understand the requirement** - Clarify diagram type, key components, and relationships
-2. **Generate XML** - Create mxGraphModel XML following draw.io specifications
-3. **Validate and save** - Check XML validity and save as `.drawio` or `.xml` file
+Generate XML directly based on templates:
 
-### Example Usage
-
-**User:** "Create a simple login flowchart"
-
-**Response:**
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <mxfile>
-  <diagram name="Login Flow">
+  <diagram name="My Diagram">
     <mxGraphModel>
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
 
-        <mxCell id="2" value="Start" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="200" y="40" width="120" height="60" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="3" value="Enter Credentials" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="200" y="140" width="120" height="60" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="4" value="Valid?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="210" y="240" width="100" height="80" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="5" value="Dashboard" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="360" y="250" width="120" height="60" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="6" value="Error Message" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="40" y="250" width="120" height="60" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="7" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="2" target="3">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="8" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="3" target="4">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="9" value="Yes" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="4" target="5">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="10" value="No" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="4" target="6">
-          <mxGeometry relative="1" as="geometry"/>
+        <!-- Add your elements here -->
+        <mxCell id="2" value="Node 1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="200" y="100" width="120" height="60" as="geometry"/>
         </mxCell>
       </root>
     </mxGraphModel>
@@ -70,275 +45,261 @@ Generate diagrams in three steps:
 </mxfile>
 ```
 
-Save as `login_flow.drawio` - ready to import into draw.io!
+### Method 2: Use Python Script
 
-## Core Workflow
+```bash
+# Simple flowchart
+python scripts/generate_diagram.py -t flowchart -o flowchart.drawio
 
-### 1. Analyze the Request
+# With custom steps
+python scripts/generate_diagram.py -t flowchart -d '{"steps":["登录","验证","处理","完成"]}' -o process.drawio
 
-Before generating XML, identify:
+# Decision flowchart
+python scripts/generate_diagram.py -t decision -d '{"question":"Valid?","yes":"Continue","no":"Retry"}' -o decision.drawio
+```
 
-- **Diagram type**: Flowchart, architecture, sequence, network, etc.
+### Method 3: Use Python API
+
+```python
+from generate_diagram import DiagramBuilder
+
+builder = DiagramBuilder("My Flowchart")
+builder.add_node("start", "开始", 200, 40, shape="ellipse", color="green")
+builder.add_node("process", "处理数据", 200, 140, shape="rectangle", color="blue")
+builder.add_node("end", "结束", 200, 240, shape="ellipse", color="green")
+builder.add_edge("start", "process")
+builder.add_edge("process", "end")
+builder.save("my_diagram.drawio")
+```
+
+## Generation Workflow
+
+### Step 1: Analyze Request
+
+Identify from user's description:
+- **Diagram type**: Flowchart? Architecture? Sequence? Network?
 - **Key elements**: What nodes/shapes are needed?
 - **Relationships**: How do elements connect?
-- **Special requirements**: Cloud icons, specific colors, animations?
+- **Special needs**: Cloud icons? Colors? Animations?
 
-### 2. Select Appropriate Patterns
+### Step 2: Select Template
 
-Based on diagram type, reference the appropriate guide:
+Choose the closest template from [references/templates.md](references/templates.md):
 
-**Flowcharts and Process Diagrams**
-- Use ellipses for start/end
-- Rectangles for processes
-- Diamonds for decisions
-- See [references/styles-patterns.md](references/styles-patterns.md#flowchart-pattern)
+| User Request | Template |
+|-------------|----------|
+| 流程图、工作流 | 基础流程图 / 决策流程图 |
+| 登录流程、审批流程 | 决策流程图 |
+| 跨部门协作 | 泳道图 |
+| API 调用、系统交互 | 序列图 |
+| 服务器、网络 | 网络拓扑图 |
+| AWS/Azure/GCP | AWS 架构图 |
+| 数据处理 | 数据流图 |
+| 公司结构 | 组织结构图 |
+| 系统状态 | 状态机图 |
+| 数据库设计 | ER 图 |
 
-**Architecture Diagrams (AWS/Azure/GCP)**
-- Use cloud provider icons
-- Group related components in containers
-- See [references/cloud-icons.md](references/cloud-icons.md)
+### Step 3: Generate XML
 
-**Sequence Diagrams**
-- Horizontal flow with actors
-- Messages as arrows
-- See [references/styles-patterns.md](references/styles-patterns.md#sequence-diagram-pattern)
+Based on the template, generate the XML:
 
-**Network Diagrams**
-- Servers, databases, load balancers
-- Bidirectional connections
-- See [references/styles-patterns.md](references/styles-patterns.md#network-diagram-pattern)
+1. **Copy the template** from templates.md
+2. **Modify values** - Replace text in `value="..."` attributes
+3. **Adjust layout** - Change x, y, width, height in geometry
+4. **Add/remove elements** - Copy mxCell blocks, ensure unique IDs
+5. **Apply styles** - Use styles from [references/styles-patterns.md](references/styles-patterns.md)
 
-### 3. Generate XML Structure
-
-Follow this template structure:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile>
-  <diagram name="Diagram Name">
-    <mxGraphModel>
-      <root>
-        <mxCell id="0"/>
-        <mxCell id="1" parent="0"/>
-
-        <!-- Vertices (shapes) -->
-        <mxCell id="2" value="..." style="..." vertex="1" parent="1">
-          <mxGeometry x="..." y="..." width="..." height="..." as="geometry"/>
-        </mxCell>
-
-        <!-- Edges (connectors) -->
-        <mxCell id="N" style="..." edge="1" parent="1" source="2" target="3">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
-</mxfile>
-```
-
-**Critical Rules:**
-1. IDs must be unique, sequential (0, 1, 2, 3...)
-2. All user elements must have `parent="1"`
-3. Vertices need `vertex="1"`, edges need `edge="1"`
-4. Edges must reference valid source/target IDs
-5. All elements need geometry (x, y, width, height)
-
-See [references/xml-format.md](references/xml-format.md) for complete specification.
-
-### 4. Apply Styles
-
-Use semantic, consistent styles:
-
-**Common Element Styles:**
-- **Start/End**: `ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;`
-- **Process**: `rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;`
-- **Decision**: `rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;`
-- **Database**: `shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;`
-
-**Common Connector Styles:**
-- **Standard**: `edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;`
-- **Curved**: Add `curved=1;`
-- **Dashed**: Add `dashed=1;`
-- **Animated**: Add `flow=1;`
-
-See [references/styles-patterns.md](references/styles-patterns.md) for complete style reference.
-
-### 5. Layout Elements
-
-**Spacing guidelines:**
-- Start from (40, 40) minimum
-- Space major elements 150-200px apart
-- Align to grid (multiples of 10 or 20)
-- Keep within 0-2000 for x/y coordinates
-
-**Flow direction:**
-- Flowcharts: Top to bottom
-- Processes: Left to right
-- Sequences: Left to right
-
-### 6. Validate
-
-Use the validation script to check for errors:
+### Step 4: Validate and Save
 
 ```bash
 python scripts/validate_xml.py diagram.drawio
 ```
 
-Or manually verify:
-- [ ] All IDs are unique
-- [ ] Cells 0 and 1 exist
-- [ ] All elements have parent="1"
-- [ ] All edges reference valid source/target
-- [ ] All coordinates are positive
-- [ ] All tags are properly closed
+Save as `.drawio` file - ready to import into draw.io!
 
-## Advanced Features
+## XML Structure Reference
 
-### Cloud Architecture Diagrams
+### Minimal Structure
 
-For AWS/Azure/GCP diagrams, use provider-specific icons:
-
-**AWS Example:**
 ```xml
-<mxCell id="2" value="EC2" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
-  <mxGeometry x="200" y="100" width="78" height="78" as="geometry"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile>
+  <diagram name="Name">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Your elements here, starting with id="2" -->
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+```
+
+### Node (Shape)
+
+```xml
+<mxCell id="UNIQUE_ID" value="Label" style="STYLE_STRING" vertex="1" parent="1">
+  <mxGeometry x="X" y="Y" width="W" height="H" as="geometry"/>
 </mxCell>
 ```
 
-See [references/cloud-icons.md](references/cloud-icons.md) for complete cloud icon reference.
-
-### Edge Routing
-
-Prevent overlapping edges by using different exit/entry points:
+### Edge (Connector)
 
 ```xml
-<!-- Edge 1: Bottom to Top -->
-<mxCell id="4" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3">
+<mxCell id="UNIQUE_ID" value="Label" style="STYLE_STRING" edge="1" parent="1" source="SOURCE_ID" target="TARGET_ID">
   <mxGeometry relative="1" as="geometry"/>
 </mxCell>
-
-<!-- Edge 2: Right to Left (different path) -->
-<mxCell id="5" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="2" target="3">
-  <mxGeometry relative="1" as="geometry"/>
-</mxCell>
 ```
 
-### Waypoints for Complex Paths
+### Critical Rules
 
-Route edges around obstacles using waypoints:
+1. **IDs must be unique** - Use sequential: 2, 3, 4, 5...
+2. **parent="1"** - All elements must have this
+3. **vertex="1"** for shapes, **edge="1"** for connectors
+4. **source/target** must reference existing IDs
+5. **All tags must be closed**
 
-```xml
-<mxCell id="4" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="2" target="3">
-  <mxGeometry relative="1" as="geometry">
-    <Array as="points">
-      <mxPoint x="300" y="150"/>
-      <mxPoint x="300" y="250"/>
-    </Array>
-  </mxGeometry>
-</mxCell>
-```
+## Common Styles Quick Reference
 
-### Containers and Grouping
+### Shapes
 
-Group related elements using containers:
+| Shape | Style |
+|-------|-------|
+| 矩形 | `rounded=1;whiteSpace=wrap;html=1;` |
+| 椭圆 | `ellipse;whiteSpace=wrap;html=1;` |
+| 菱形 | `rhombus;whiteSpace=wrap;html=1;` |
+| 圆柱 | `shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;` |
+| 云 | `ellipse;shape=cloud;whiteSpace=wrap;html=1;` |
+| 人物 | `shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;` |
 
-```xml
-<mxCell id="2" value="VPC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;verticalAlign=top;" vertex="1" parent="1">
-  <mxGeometry x="100" y="100" width="400" height="300" as="geometry"/>
-</mxCell>
+### Colors
 
-<!-- Elements inside container have parent="2" instead of parent="1" -->
-<mxCell id="3" value="Subnet" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="2">
-  <mxGeometry x="20" y="40" width="120" height="60" as="geometry"/>
-</mxCell>
-```
+| Color | Fill | Stroke |
+|-------|------|--------|
+| 蓝色 | `#dae8fc` | `#6c8ebf` |
+| 绿色 | `#d5e8d4` | `#82b366` |
+| 黄色 | `#fff2cc` | `#d6b656` |
+| 橙色 | `#ffe6cc` | `#d79b00` |
+| 红色 | `#f8cecc` | `#b85450` |
+| 紫色 | `#e1d5e7` | `#9673a6` |
 
-## Common Diagram Types
+Usage: `fillColor=#dae8fc;strokeColor=#6c8ebf;`
 
-### Flowchart
-- Use ellipses (start/end), rectangles (process), diamonds (decision)
-- Top-to-bottom flow
-- Orthogonal connectors
+### Edge Styles
+
+| Type | Style |
+|------|-------|
+| 直线箭头 | `endArrow=classic;html=1;` |
+| 正交箭头 | `edgeStyle=orthogonalEdgeStyle;html=1;endArrow=classic;` |
+| 曲线 | `edgeStyle=orthogonalEdgeStyle;html=1;curved=1;endArrow=classic;` |
+| 虚线 | `dashed=1;` |
+| 双向 | `endArrow=classic;startArrow=classic;` |
+
+## Layout Guidelines
+
+**Positioning:**
+- Start from (40, 40)
+- Space elements 100-150px apart vertically
+- Space elements 150-200px apart horizontally
+- Keep within 0-2000 range
+
+**Flow Direction:**
+- Flowcharts: Top → Bottom
+- Processes: Left → Right
+- Sequences: Left → Right
+
+**Sizing:**
+- Standard node: 120x60
+- Decision diamond: 100x80
+- Ellipse (start/end): 100x50
+- Cloud icons: 78x78
+
+## Examples by Diagram Type
+
+### Simple Flowchart
+
+User: "创建一个用户登录流程图"
+
+Generate:
+1. Start (ellipse, green)
+2. Enter credentials (rectangle, blue)
+3. Validate (diamond, orange)
+4. Success → Dashboard (rectangle, green)
+5. Failure → Error message (rectangle, red)
+6. End (ellipse, green)
 
 ### AWS Architecture
-- Use AWS icons from `mxgraph.aws4.*`
-- Group in VPC containers
-- Show data flow with arrows
+
+User: "创建 AWS 三层架构图"
+
+Generate:
+1. Users (actor)
+2. CloudFront (AWS icon)
+3. ALB (AWS icon)
+4. EC2 instances x2 (AWS icon)
+5. RDS (AWS icon)
+6. Connect with arrows
+
+For AWS icons, see [references/cloud-icons.md](references/cloud-icons.md).
 
 ### Sequence Diagram
-- Actors on left
-- Horizontal message flow
-- Time flows downward
 
-### Network Diagram
-- Use server/database shapes
-- Bidirectional connections
-- Group by network segments
+User: "创建登录 API 序列图"
 
-### UML Class Diagram
-- Rectangles with compartments
-- Different arrow types for relationships
-- Vertical layout
-
-## Tips for High-Quality Diagrams
-
-1. **Be consistent**: Use same size for similar elements (120x60 for most shapes)
-2. **Use semantic colors**: Green for success, red for errors, blue for processes
-3. **Label everything**: Clear, concise labels on all elements
-4. **Avoid overlap**: Space elements adequately, use waypoints for complex routing
-5. **Follow conventions**: Match industry-standard diagram styles
-6. **Test in draw.io**: Always validate the XML can be imported
-
-## Troubleshooting
-
-**Diagram doesn't appear:**
-- Check cells 0 and 1 exist
-- Verify all elements have `parent="1"`
-- Ensure geometry is defined
-
-**Edges don't connect:**
-- Verify source/target IDs exist
-- Check IDs are unique
-- Ensure edge has `edge="1"` attribute
-
-**Elements overlap:**
-- Increase spacing between elements
-- Use waypoints for edge routing
-- Check x/y coordinates
-
-**XML parsing error:**
-- Run validation script
-- Check all tags are closed
-- Verify special characters are escaped
+Generate:
+1. User lifeline
+2. Frontend lifeline
+3. Backend lifeline
+4. Database lifeline
+5. Horizontal arrows between lifelines
 
 ## Resources
 
-### References
+### Reference Documents
 
-- **[XML Format Specification](references/xml-format.md)** - Complete mxGraphModel structure, cell types, geometry
-- **[Styles and Patterns](references/styles-patterns.md)** - Common styles, color schemes, diagram patterns, edge routing
-- **[Cloud Icons](references/cloud-icons.md)** - AWS, Azure, GCP service icons and examples
+All required knowledge is in these files:
+
+- **[references/xml-format.md](references/xml-format.md)** - Complete XML specification
+- **[references/styles-patterns.md](references/styles-patterns.md)** - All styles and patterns
+- **[references/cloud-icons.md](references/cloud-icons.md)** - AWS/Azure/GCP icons
+- **[references/templates.md](references/templates.md)** - Ready-to-use complete templates
 
 ### Scripts
 
-- **validate_xml.py** - Validate draw.io XML for errors and warnings
+- **[scripts/generate_diagram.py](scripts/generate_diagram.py)** - Python diagram generator
+- **[scripts/validate_xml.py](scripts/validate_xml.py)** - XML validator
 
-```bash
-python scripts/validate_xml.py diagram.drawio
-```
+## Troubleshooting
 
-## Example Gallery
+**Diagram blank:**
+- Verify cells 0 and 1 exist
+- Check all elements have `parent="1"`
+- Ensure geometry is defined with x, y, width, height
 
-### Simple Flowchart
-Start → Process → Decision → End
+**Edges not connecting:**
+- Verify source/target IDs exist
+- Check IDs are unique
+- Ensure edge has `edge="1"`
 
-### AWS 3-Tier Architecture
-User → CloudFront → ALB → EC2 → RDS
+**XML parse error:**
+- Run validator: `python scripts/validate_xml.py file.drawio`
+- Check all tags are closed
+- Escape special characters: `&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`
 
-### Sequence Diagram
-User → Frontend → API → Database → Response
+**Elements overlap:**
+- Increase x/y spacing
+- Check coordinates are not negative
 
-### Network Topology
-Router → Switch → Servers → Firewall → Internet
+## Summary
 
-For complete examples, see the respective reference files.
+This skill enables generating professional draw.io diagrams without any external dependencies. The workflow is:
+
+1. **Read user requirement**
+2. **Select template** from templates.md
+3. **Modify XML** based on requirement
+4. **Apply styles** from styles-patterns.md
+5. **Validate** with validate_xml.py
+6. **Save** as .drawio file
+
+All knowledge needed is contained in the reference files. DO NOT search externally.
