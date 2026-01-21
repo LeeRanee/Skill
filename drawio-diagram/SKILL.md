@@ -1,15 +1,27 @@
 ---
 name: drawio-diagram
-description: Generate draw.io diagrams from natural language descriptions. This is a STANDALONE skill that requires NO external tools, MCP servers, or API calls. Use when creating visual diagrams including flowcharts, architecture diagrams (AWS/Azure/GCP), sequence diagrams, network diagrams, process flows, organizational charts, UML diagrams, or any structured visual representation. Outputs draw.io XML that can be imported into diagrams.net or saved as .drawio files.
+description: Generate draw.io diagrams from natural language descriptions. Use when creating visual diagrams including flowcharts, architecture diagrams (AWS/Azure/GCP), sequence diagrams, network diagrams, process flows, organizational charts, UML diagrams, or any structured visual representation. Outputs draw.io XML that can be imported into diagrams.net or saved as .drawio files.
 ---
 
 # Draw.io Diagram Generator
 
-Generate draw.io diagrams directly from natural language descriptions. This skill is **completely standalone** - all required knowledge is contained within this skill, requiring no external tools or services.
+Generate draw.io diagrams directly from natural language descriptions by producing valid draw.io XML.
 
-## Important: This Skill is Self-Contained
+## Important: Tool Usage Rules
 
-This skill provides everything needed to generate draw.io diagrams:
+**ALLOWED tools:**
+- ✅ Web search tools (WebSearch, mcp__exa__*, etc.) - for researching best practices, icon references, architecture patterns
+- ✅ File tools (Read, Write, Edit) - for creating and saving diagram files
+- ✅ Bash - for running validation scripts
+
+**FORBIDDEN tools:**
+- ❌ `mcp__drawio__*` - DO NOT use any drawio MCP tools (start_session, create_new_diagram, edit_diagram, get_diagram, export_diagram)
+
+This skill generates draw.io XML directly using the knowledge below. The diagram generation is done entirely by Claude, not by external MCP servers.
+
+## Skill Resources
+
+This skill provides comprehensive knowledge for diagram generation:
 
 1. **Complete XML Specification** - See [references/xml-format.md](references/xml-format.md)
 2. **Full Style Reference** - See [references/styles-patterns.md](references/styles-patterns.md)
@@ -18,7 +30,7 @@ This skill provides everything needed to generate draw.io diagrams:
 5. **Python Generation Scripts** - See [scripts/generate_diagram.py](scripts/generate_diagram.py)
 6. **Validation Tools** - See [scripts/validate_xml.py](scripts/validate_xml.py)
 
-**DO NOT use web search, MCP tools, or external services.** All information is available in the reference files above.
+When you need additional information (e.g., latest AWS service icons, specific diagram conventions), use web search tools to research, then generate the XML yourself.
 
 ## Quick Start
 
@@ -293,13 +305,14 @@ All required knowledge is in these files:
 
 ## Summary
 
-This skill enables generating professional draw.io diagrams without any external dependencies. The workflow is:
+This skill enables generating professional draw.io diagrams. The workflow is:
 
 1. **Read user requirement**
-2. **Select template** from templates.md
-3. **Modify XML** based on requirement
-4. **Apply styles** from styles-patterns.md
-5. **Validate** with validate_xml.py
-6. **Save** as .drawio file
+2. **Research if needed** - Use web search for best practices, icons, or conventions
+3. **Select template** from templates.md
+4. **Modify XML** based on requirement
+5. **Apply styles** from styles-patterns.md
+6. **Validate** with validate_xml.py
+7. **Save** as .drawio file
 
-All knowledge needed is contained in the reference files. DO NOT search externally.
+**Remember:** Generate XML directly using this skill's knowledge. DO NOT use `mcp__drawio__*` tools.
