@@ -1,0 +1,3 @@
+[submodule "image-prompt-director"]
+	path = image-prompt-director
+	url = https://github.com/LeeRanee/image-prompt-director.git
