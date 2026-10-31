@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add first-turn guidance to explicit requests and braised-food product images."""
+"""Add first-turn guidance to explicit requests and supported preset intents."""
 
 import json
 import sys
@@ -18,16 +18,25 @@ IMAGE_TERMS = (
     "商品摄影", "产品摄影", "食品摄影", "产品拍摄", "商品拍摄", "美食摄影", "图片", "照片", "图像", "配图",
     "生图", "出图", "做图", "画图", "制图", "摄影图", "拍图", "渲染图", "图生图", "生成图", "制作图",
 )
+BEAD_TERMS = ("拼豆",)
+SIMPLIFICATION_TERMS = (
+    "简化", "精简", "减少细节", "降低细节", "大色块", "前置图", "前置插画",
+    "适合拼豆", "适合做拼豆", "便于拼豆", "方便做拼豆",
+)
 
 
 def should_add_context(prompt):
-    """Recognize explicit invocation or a food item with product-image intent."""
+    """Recognize explicit invocation and the two supported preset intents."""
     lowered = prompt.lower()
     if "image-prompt-director" in lowered:
         return True
-    return any(term in prompt for term in FOOD_TERMS) and any(
+    food_image = any(term in prompt for term in FOOD_TERMS) and any(
         term in prompt for term in IMAGE_TERMS
     )
+    bead_simplification = any(term in prompt for term in BEAD_TERMS) and any(
+        term in prompt for term in SIMPLIFICATION_TERMS
+    )
+    return food_image or bead_simplification
 
 
 def main():
