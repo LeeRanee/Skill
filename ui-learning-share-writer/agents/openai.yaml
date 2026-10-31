@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI 设计学习分享"
+  short_description: "将指定设计材料写成自然的个人学习分享，支持直接写、提纲讨论和 Obsidian 保存"
+  default_prompt: "请使用 $ui-learning-share-writer，依据我指定的 UI 设计材料写学习分享，并先确认本次写作方式。"
