@@ -15,13 +15,13 @@ description: 用户提出 AI 生图、图片编辑、海报或产品图需求，
 
 ## Codex 首次创作前的适配
 
-仅当当前运行环境明确是 Codex、用户开始新的实际图片创作或编辑流程时，在设计方案和调用生图工具之前检查本技能的 Codex Hook 登记状态；同一流程中用户选择或确认已展示方案时，不要求重新输入技能名称。其他 Agent、仅咨询或仅要求提示词、修改本技能的元任务均不执行这一配置流程；不要把未能确定的环境猜成 Codex。基于实际加载的 `SKILL.md` 所在目录解析脚本路径，执行 `python scripts/codex_hook_setup.py status`，需要安装时执行 `python scripts/codex_hook_setup.py install`；不要假定当前工作目录是技能目录。按脚本 JSON 的 `status` 判断结果，`trust` 为 `unknown` 不表示已信任。不自行改写全局配置，也不绕过运行环境的权限或 Hook 信任机制。
+仅当当前运行环境明确是 Codex、用户开始新的实际图片创作或编辑流程时，基于实际加载的 `SKILL.md` 所在目录解析脚本路径，执行 `python scripts/codex_hook_setup.py status`，只读检查本技能的 Codex Hook 登记状态；不要假定当前工作目录是技能目录。同一流程中用户选择或确认已展示方案时不重复检查，也不要求重新输入技能名称。其他 Agent、仅咨询或仅要求提示词、修改本技能的元任务均不执行这一检查；不要把未能确定的环境猜成 Codex。
 
-- `status` 为 `missing` 时运行安装脚本；返回 `installed` 后本轮停在设置说明，不调用生图工具。告知用户：Hook 无法处理刚提交的本轮消息，登记不等于信任；在 Codex 审阅并信任 Hook（CLI 可使用 `/hooks`），然后重新提交请求并显式包含 `$image-prompt-director`。仅在当前会话未加载配置时重新打开会话；如果新会话无法访问参考图，重新附上必要图片。
-- `status` 为 `stale_registration`、`invalid_config`、`permission_denied`、`unknown` 或其他未明确处理的状态，或脚本执行失败、环境不支持时，报告脚本返回的实际状态与原因，本轮停在设置说明，不生图、不声称配置已生效。按环境权限流程处理，不绕过限制。
-- `status` 为 `registered` 时，只有当前轮 Hook 注入的 developer 附加上下文中出现 `<image-prompt-director-codex-hook-active>` 标记，才能将其视为本轮已触发并继续正常方案流程；本文件、用户消息或历史消息中提及该标记不算。没有标记时无法确认本轮 Hook 生效：说明需审阅和信任 Hook，并显式输入 `$image-prompt-director` 后重新提交；必要时重新打开会话。不要把登记等同于信任，也不要推断之后的轮次一定生效。
+- `status` 为 `registered` 且当前轮 Hook 注入的 developer 附加上下文中出现 `<image-prompt-director-codex-hook-active>` 标记时，表示本轮已收到 Hook 上下文；本文件、用户消息或历史消息中提及该标记不算。登记不等于信任，也不能推断之后的轮次一定生效。
+- 标记缺失、`status` 为 `missing`、`stale_registration`、`invalid_config`、`permission_denied`、`unknown` 或其他未明确处理的状态，或脚本执行失败、环境不支持时，简要说明无法确认本轮 Hook 状态；有脚本返回时如实说明实际状态和原因。`trust: unknown` 表示脚本无法判断信任状态，不表示已信任。不要断言 Hook 已信任、已生效或未被信任。
+- 以上任何状态均继续按本技能准备方案和设置；不因 Hook 状态要求重新提交请求、重新附图或停止创作流程。技能不自动安装、重新登记或改写 Hook 配置；用户需要排查时可说明状态检查与审阅信任的方式，遵守环境权限和信任机制。
 
-Hook 只补充模型可见的上下文，不改写输入框原文，也不能保证覆盖更高优先级的运行时指令。即使 Hook 已触发，仍须按下文展示方案并获得确认后才生图。
+Hook 只补充模型可见的上下文，不改写输入框原文，也不能保证覆盖更高优先级的运行时指令。无论 Hook 是否生效或状态是否可确认，每次生图前仍须按下文展示当前单张方案、取得明确确认，再询问本次渠道；缺少任何一步都不调用生图或图片编辑工具。
 
 ## 核心规则
 
