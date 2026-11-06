@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI 界面诊断与设计答疑"
+  short_description: "从 UI、UX 与产品逻辑评审界面，支持局部答疑、方案对比和改稿复查"
+  default_prompt: "请使用 $ui-design-review 完整评审我提供的界面截图，说明值得保留的设计、主要问题与优先改法；默认不评分，并沿用本次对话中已有的背景。"
